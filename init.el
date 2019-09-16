@@ -129,6 +129,10 @@
     "R" 'neotree-change-root
     "h" 'neotree-collapse-all
     )
+  (general-def 'normal magit-mode-map
+    ",c" 'with-editor-finish
+    ",q" 'with-editor-cancel
+    )
   )
 
 
