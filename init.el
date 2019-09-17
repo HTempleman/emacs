@@ -115,6 +115,10 @@
    "gs" '(magit-status :which-key "status")
    "gi" '(magit-init :which-key "initialize-repo")
    "gc" '(magit-commit :which-key "commit")
+
+   ;; Toggle keybindings
+   "t" '("toggle")
+   "tn" '(display-line-numbers-mode :which-key "line-numbers")
    )
  
 
@@ -128,10 +132,6 @@
     "J" 'neotree-select-down-node
     "R" 'neotree-change-root
     "h" 'neotree-collapse-all
-    )
-  (general-def 'normal magit-mode-map
-    ",c" 'with-editor-finish
-    ",q" 'with-editor-cancel
     )
   )
 
