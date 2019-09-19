@@ -158,6 +158,7 @@
   :ensure t
   :mode (("\\.tsx\\'" . rjsx-mode))
   :config
+  (setq js-indent-level 2)
   (add-hook 'rjsx-mode-hook
 	    (lambda ()
 	      (when (string-equal "tsx" (file-name-extension buffer-file-name))
