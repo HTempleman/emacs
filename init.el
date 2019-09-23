@@ -10,7 +10,7 @@
 
 
 ;; Enable auto-fill-mode
-(auto-fill-mode)
+(setq-default auto-fill-function 'do-auto-fill)
 
 ;; Global Settings
 (show-paren-mode 1)
@@ -62,6 +62,9 @@
 (use-package typescript-mode
   :ensure t)
 
+(use-package scad-mode
+  :ensure t)
+
 (use-package fzf
 	    :ensure t)
 
@@ -94,7 +97,9 @@
 
 
 (use-package neotree
-  :ensure t)
+  :ensure t
+  :init
+  (setq neo-smart-open t))
 
 
 (use-package magit
@@ -244,7 +249,17 @@
    ;; Toggle keybindings
    "t" '("toggle")
    "tn" '(display-line-numbers-mode :which-key "line-numbers")
+
+   ;; Shell Keybindings
+   "s" '("shell")
+   "si" '(shell :which-key "inferior-shell")
+
+   ;; Buffer Keybindings
+   "b" '("buffer")
+   "bm" '(buffer-menu :which-key "list-buffers")
    )
+
+
  
 
 
@@ -256,6 +271,7 @@
     "K" 'neotree-select-up-node
     "J" 'neotree-select-down-node
     "R" 'neotree-change-root
+    "r" 'neotree-rename-node
     "h" 'neotree-collapse-all
     )
 
