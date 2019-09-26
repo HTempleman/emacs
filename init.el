@@ -15,6 +15,7 @@
 ;; Global Settings
 (show-paren-mode 1)
 (electric-pair-mode)
+(menu-bar-mode -1)
 
 ;; Bootstrap use-package:
 (unless (package-installed-p 'use-package)
@@ -50,6 +51,10 @@
 	     :config
 	     (evil-mode 1)
 	     )
+
+(use-package rust-mode
+  :ensure t
+  :init)
 
 (use-package evil-escape
 	     :ensure t
