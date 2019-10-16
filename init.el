@@ -15,7 +15,11 @@
 ;; Global Settings
 (show-paren-mode 1)
 (electric-pair-mode)
+;; Get rid of cruft.
 (menu-bar-mode -1)
+(tool-bar-mode -1)
+(toggle-scroll-bar -1)
+(set-face-attribute 'default nil :height 130)
 
 ;; Bootstrap use-package:
 (unless (package-installed-p 'use-package)
@@ -101,10 +105,14 @@
   (helm-projectile-on))
 
 
+(use-package all-the-icons
+  :load-path "~/.emacs.d/git-packages/all-the-icons.el")
+
 (use-package neotree
   :ensure t
   :init
-  (setq neo-smart-open t))
+  (setq neo-smart-open t)
+  (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
 
 
 (use-package magit
@@ -254,10 +262,11 @@
    ;; Toggle keybindings
    "t" '("toggle")
    "tn" '(display-line-numbers-mode :which-key "line-numbers")
+   "ta" '(auto-fill-mode :which-key "auto-fill")
 
    ;; Shell Keybindings
    "s" '("shell")
-   "si" '(shell :which-key "inferior-shell")
+   "si" '(ansi-term :which-key "ansi-term")
 
    ;; Buffer Keybindings
    "b" '("buffer")
