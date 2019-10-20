@@ -21,6 +21,10 @@
 (toggle-scroll-bar -1)
 (set-face-attribute 'default nil :height 130)
 
+
+;; Set sudo shorcut
+(setenv "sudo" "/sudo::")
+
 ;; Bootstrap use-package:
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -67,6 +71,7 @@
 
 (use-package js2-mode
   :ensure t)
+
 
 (use-package typescript-mode
   :ensure t)
@@ -216,12 +221,13 @@
   :ensure t
   :init
   :config
+  (general-override-mode)
   (general-define-key
-   :keymaps '(emacs normal visual hybrid operator replace )
+   :states 'normal 
+   :keymaps 'override
    :prefix "SPC"
-   :non-normal-prefix " SPC"
-   "TAB" '(switch-to-prev-buffer
-	   :which-key "previous-buffer")
+   :non-normal-prefix "SPC"
+
 
    "/" '(helm-projectile-rg
 	 :which-key "ripgrep")
@@ -267,6 +273,7 @@
    ;; Shell Keybindings
    "s" '("shell")
    "si" '(ansi-term :which-key "ansi-term")
+   "ss" '(find-file "/sudo::" :which-key "sudo")
 
    ;; Buffer Keybindings
    "b" '("buffer")
@@ -287,12 +294,14 @@
     "R" 'neotree-change-root
     "r" 'neotree-rename-node
     "h" 'neotree-collapse-all
+    "R" 'neotree-change-root
     )
 
   (general-def 'normal helm-map
     "C-j" 'helm-next-line)
   )
 
+(evil-set-initial-state 'pdf-view-mode 'normal)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -308,3 +317,4 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+(pdf-tools-install)
