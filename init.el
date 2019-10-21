@@ -1,4 +1,4 @@
-;; This config was pulled very heavily from one conceived by Sanchayan
+; This config was pulled very heavily from one conceived by Sanchayan
 ;; Maity. It is an attempt to take the nice parts from Spacemacs.
 
 
@@ -194,6 +194,9 @@
   :after treemacs magit
   :ensure t)
 
+(use-package dumb-jump
+  :ensure t)
+
 (use-package buffer-move
   :ensure t
   )
@@ -316,6 +319,8 @@
 	  :which-key "find-files")
    "pp" '(helm-projectile-switch-project
 	  :which-key "switch-project")
+   "pj" '(dumb-jump-go :which-key "dumb-jump-go")
+   "pJ" '(dumb-jump-back :which-key "dumb-jump-back")
 
    ;; Bindings for file search and management.
    "f" '("files")
