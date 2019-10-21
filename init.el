@@ -1,6 +1,7 @@
-; This config was pulled very heavily from one conceived by Sanchayan
+;; This config was pulled very heavily from one conceived by Sanchayan
 ;; Maity. It is an attempt to take the nice parts from Spacemacs.
-
+;; 'M-x bug-hunter-init-file' should be useful to you for locating
+;; problems in the initialization file!
 
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 (require 'package)
@@ -368,27 +369,8 @@
    ;; Buffer Keybindings
    "b" '("buffer")
    "bm" '(buffer-menu :which-key "list-buffers")
+   "bf" '(helm-imenu-in-all-buffers :which-key "list-functions-from-all-buffers")
    )
-
-
- 
-
-
-  (general-def 'normal neotree-mode-map
-    "l" 'neotree-enter
-    "c" 'neotree-create-node
-    "d" 'neotree-delete-node
-    "a" 'neotree-hidden-file-toggle
-    "K" 'neotree-select-up-node
-    "J" 'neotree-select-down-node
-    "R" 'neotree-change-root
-    "r" 'neotree-rename-node
-    "h" 'neotree-collapse-all
-    "R" 'neotree-change-root
-    )
-
-  (general-def 'normal helm-map
-    "C-j" 'helm-next-line)
   )
 
 (evil-set-initial-state 'pdf-view-mode 'normal)
@@ -400,7 +382,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (helm rjsx-mode tide web-mode company-quickhelp company flycheck typescript-mode slime pdf-tools evil-magit zenburn-theme which-key use-package restart-emacs neotree magit general fzf evil-escape evil auto-package-update))))
+    (bug-hunter helm rjsx-mode tide web-mode company-quickhelp company flycheck typescript-mode slime pdf-tools evil-magit zenburn-theme which-key use-package restart-emacs neotree magit general fzf evil-escape evil auto-package-update))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
