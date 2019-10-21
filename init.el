@@ -316,7 +316,7 @@
 
    ;; Bindings for projectile featurs.
    "p" '("projectile")
-   "pf" '(helm-projectile-find-file-dwim-other-window
+   "pf" '(projectile-find-file-dwim-other-window
 	  :which-key "find-files")
    "pp" '(helm-projectile-switch-project
 	  :which-key "switch-project")
