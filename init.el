@@ -93,6 +93,18 @@
   :config
   (helm-mode 1))
 
+(use-package helm-swoop
+  :ensure t
+  :config
+  (setq helm-multi-swoop-edit-save t)
+  (setq helm-swoop-split-with-multiple-windows nil)
+  (setq helm-swoop-split-direction 'split-window-vertically)
+  (setq helm-swoop-speed-or-color nil)
+  (setq helm-swoop-move-to-line-cycle t)
+  (setq helm-swoop-use-line-number-face t)
+  (setq helm0swoop-use-fuzzy-match t)
+  )
+
 (use-package helm-rg
   :ensure t)
 
@@ -305,7 +317,7 @@
   :config
   (general-override-mode)
   (general-define-key
-   :states '(normal treemacs)
+   :states '(normal motion treemacs)
    :keymaps 'override
    :prefix "SPC"
    :non-normal-prefix "SPC"
@@ -361,6 +373,11 @@
    "tn" '(display-line-numbers-mode :which-key "line-numbers")
    "ta" '(auto-fill-mode :which-key "auto-fill")
 
+
+   ;; Helm keybindings
+   "h" '("helm")
+   "hs" '(helm-swoop-without-pre-input :which-key "helm-swoop")
+
    ;; Shell Keybindings
    "s" '("shell")
    "si" '(ansi-term :which-key "ansi-term")
@@ -370,6 +387,22 @@
    "b" '("buffer")
    "bm" '(buffer-menu :which-key "list-buffers")
    "bf" '(helm-imenu-in-all-buffers :which-key "list-functions-from-all-buffers")
+
+   ;; Bookmark Keybindings
+   "l" '("bookmark")
+   "ls" '(bookmark-set :which-key "set-bookmark")
+   "ll" '(list-bookmark :which-key "list-bookmarks")
+   "lj" '(bookmark-jump :which-key "jump-to-bookmark")
+
+   )
+
+  (general-define-key
+   :states 'normal
+   :keymaps 'pdf-view-mode-map
+   "j" 'pdf-view-next-page-command
+   "k" 'pdf-view-previous-page-command
+   "P" 'pdf-view-goto-page
+   "H" 'pdf-view-fit-height-to-window
    )
   )
 
@@ -382,7 +415,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (bug-hunter helm rjsx-mode tide web-mode company-quickhelp company flycheck typescript-mode slime pdf-tools evil-magit zenburn-theme which-key use-package restart-emacs neotree magit general fzf evil-escape evil auto-package-update))))
+    (helm-swoop bug-hunter helm rjsx-mode tide web-mode company-quickhelp company flycheck typescript-mode slime pdf-tools evil-magit zenburn-theme which-key use-package restart-emacs neotree magit general fzf evil-escape evil auto-package-update))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
