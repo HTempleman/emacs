@@ -3,11 +3,21 @@
 ;; 'M-x bug-hunter-init-file' should be useful to you for locating
 ;; problems in the initialization file!
 
+;; set exec path
+(setq exec-path (append exec-path '(
+				    "/bin",
+				    "~/.pyenv/shims",
+				    "~/.nvm/versions/node/v10.16.3/bin/"
+				    )))
+
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 (require 'package)
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
 			 ("melpa" . "https://melpa.org/packages/")))
 (package-initialize)
+
+;; Tramp Settings
+(setq tramp-default-method "ssh")
 
 
 ;; Enable auto-fill-mode
@@ -16,12 +26,16 @@
 ;; Global Settings
 (show-paren-mode 1)
 (electric-pair-mode)
+(global-eldoc-mode -1)
 ;; Get rid of cruft.
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (toggle-scroll-bar -1)
 (set-face-attribute 'default nil :height 130)
+(setq use-dialog-box nil)
 
+;; rg keybindings
+(rg-enable-default-bindings)
 
 ;; Set sudo shorcut
 (setenv "sudo" "/sudo::")
@@ -31,10 +45,10 @@
   (package-refresh-contents)
   (package-install 'use-package))
 (eval-when-compile
+  (require 'rg)
   (require 'use-package))
 
 
-;; Always download all packages if not already downloaded.
 (setq use-package-always-ensure t)
 
 ;; Specify that packages should remain up-to-date.
@@ -53,6 +67,39 @@
 	     :config
 	     (load-theme 'zenburn t))
 
+
+
+;; lsp configuration
+(use-package lsp-mode
+  :hook ((
+	  web-mode
+	  python-mode
+	  ) . lsp )
+	:commands lsp)
+
+(use-package lsp-ui
+  :ensure t
+  :commands lsp-ui-mode
+  :config
+  (setq lsp-ui-sideline-enable t)
+  )
+(use-package company-lsp :commands company-lsp)
+
+
+(defvar lsp-language-id-configuration
+  '(
+    (web-mode . "web")
+    (python-mode . "python")
+    (typescript-mode . "typescript")
+    ))
+
+(use-package pyvenv
+  :diminish
+  :config
+  (setq pyvenv-mode-line-indicator
+	'(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] ")))
+  (pyvenv-mode +1))
+
 (use-package evil
 	     :ensure t
 	     :init
@@ -61,9 +108,27 @@
 	     (evil-mode 1)
 	     )
 
+
+
+(use-package markdown-mode
+  :ensure t
+  :init)
+
+(use-package python-mode
+  :ensure t
+  :init
+  )
 (use-package rust-mode
   :ensure t
   :init)
+
+(use-package csound-mode
+  :ensure t
+  :mode (("\\.csd\\'" . csound-mode)
+	 ("\\.orc\\'" . csound-mode)
+	 ("\\.sco\\'" . csound-mode)
+	 ("\\.udo\\'" . csound-mode))
+  )
 
 (use-package evil-escape
 	     :ensure t
@@ -80,9 +145,16 @@
 (use-package scad-mode
   :ensure t)
 
+
 (use-package fzf
 	    :ensure t)
 
+
+(use-package org-pomodoro
+  :ensure t
+  :config
+  (setq org-pomodoro-finished-sound "~/.emacs.d/audio/pomodoro_alarm.wav")
+  )
 
 (use-package async
   :ensure t)
@@ -228,15 +300,6 @@
 ;; Settings for React w/ Typescript
 ;; Greatly helped along by a config from one daniel-vu.
 
-(defun setup-tide-mode ()
-  (interactive)
-  (tide-setup)
-  (flycheck-mode +1)
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-  (eldoc-mode +1)
-  (tide-h1-identifier-mode +1)
-  (company-mode +1))
-
 (use-package company
   :ensure t
   :config
@@ -254,39 +317,19 @@
 
 
 (use-package web-mode
-  :ensure t
-  :mode (("\\.html?\\'" . web-mode))
-  :config
-  (setq web-mode-markup-indent-offset 2
-	web-mode-css-indent-offset 2
-	web-mode-code-indent-offset 2
-	web-mode-block-padding 2
-	web-mode-comment-style 2
-
-	web-mode-enable-css-colorization t
-	web-mode-enable-auto-pairing t
-	web-mode-enable-comment-keywords t
-	web-mode-enable-current-element-highlight t
-	)
-  (flycheck-add-mode 'typescript-tslint 'web-mode))
+  :mode (("\\.tsx\\'" . web-mode))
+  )
 
 
 (use-package rjsx-mode
   :ensure t
-  :mode (("\\.tsx\\'" . rjsx-mode))
   :config
-  (setq js-indent-level 2)
-  (add-hook 'rjsx-mode-hook
-	    (lambda ()
-	      (when (string-equal "tsx" (file-name-extension buffer-file-name))
-		(setup-tide-mode))))
-  (flycheck-add-mode 'typescript-tslint 'rjsx-mode))
+  (setq js-indent-level 2))
 
 (use-package typescript-mode
   :ensure t
   :config
-  (setq typescript-indent-level 2)
-  (add-hook 'typescript-mode #'subword-mode))
+  (setq typescript-indent-level 2))
 
 
 (use-package tide
@@ -328,12 +371,14 @@
 
    ;; Bindings for projectile featurs.
    "p" '("projectile")
-   "pf" '(projectile-find-file-dwim-other-window
-	  :which-key "find-files")
+   "pf" '(helm-projectile-find-file :which-key "find-project-file")
+   "pF" '(projectile-find-file-dwim-other-window
+	  :which-key "jump-to-file")
    "pp" '(helm-projectile-switch-project
 	  :which-key "switch-project")
    "pj" '(dumb-jump-go :which-key "dumb-jump-go")
    "pJ" '(dumb-jump-back :which-key "dumb-jump-back")
+   "pg" '(projectile-grep :which-key "projectile-grep")
 
    ;; Bindings for file search and management.
    "f" '("files")
@@ -378,6 +423,10 @@
    "h" '("helm")
    "hs" '(helm-swoop-without-pre-input :which-key "helm-swoop")
 
+   ;; Pomodoro keybindings
+   "P" '("pomidor")
+   "Pp" '(pomidor-stop :which-key "pomidors")
+
    ;; Shell Keybindings
    "s" '("shell")
    "si" '(ansi-term :which-key "ansi-term")
@@ -385,8 +434,10 @@
 
    ;; Buffer Keybindings
    "b" '("buffer")
-   "bm" '(buffer-menu :which-key "list-buffers")
+   "bm" '(switch-to-buffer :which-key "buffer-switch")
    "bf" '(helm-imenu-in-all-buffers :which-key "list-functions-from-all-buffers")
+   "bh" '(previous-buffer :which-key "previous-buffer")
+   "bl" '(next-buffer :which-key "next-buffer")
 
    ;; Bookmark Keybindings
    "l" '("bookmark")
@@ -399,14 +450,27 @@
   (general-define-key
    :states 'normal
    :keymaps 'pdf-view-mode-map
-   "j" 'pdf-view-next-page-command
-   "k" 'pdf-view-previous-page-command
+   "j" 'pdf-view-next-line-or-next-page
+   "k" 'pdf-view-previous-line-or-previous-page
+   "J" 'pdf-view-next-page-command
+   "K" 'pdf-view-previous-page-command
    "P" 'pdf-view-goto-page
    "H" 'pdf-view-fit-height-to-window
+   "W" 'pdf-view-fit-width-to-window
+   "h" 'image-backward-hscroll
+   "l" 'image-forward-hscroll
+   "p" 'pdf-view-enlarge
+   "n" 'pdf-view-shrink
+   "r" 'image-scroll-right
+   "F" 'pdf-occur
+   "o" 'pdf-outline
    )
   )
 
 (evil-set-initial-state 'pdf-view-mode 'normal)
+(add-hook 'pdf-view-mode-hook
+	  (lambda ()
+	    (set (make-local-variable 'evil-normal-state-cursor) (list nil))))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -415,7 +479,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (helm-swoop bug-hunter helm rjsx-mode tide web-mode company-quickhelp company flycheck typescript-mode slime pdf-tools evil-magit zenburn-theme which-key use-package restart-emacs neotree magit general fzf evil-escape evil auto-package-update))))
+    (pyvenv lsp-ui lsp-mode shackle borg csound-mode helm-swoop bug-hunter helm rjsx-mode tide web-mode company-quickhelp company flycheck typescript-mode slime pdf-tools evil-magit zenburn-theme which-key use-package restart-emacs neotree magit general fzf evil-escape evil auto-package-update))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -423,3 +487,4 @@
  ;; If there is more than one, they won't work right.
  )
 (pdf-tools-install)
+
