@@ -4,6 +4,8 @@
 				    "~/.nvm/versions/node/v10.16.3/bin"
 				    )))
 
+(require 'mu4e)
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 (require 'package)
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
@@ -38,7 +40,6 @@
   (package-refresh-contents)
   (package-install 'use-package))
 (eval-when-compile
-  (require 'rg)
   (require 'use-package))
 
 (setq use-package-always-ensure t)
@@ -66,7 +67,7 @@
 (use-package dashboard
   :config
   (setq dashboard-banner-logo-title "Greetings Hunter.")
-  (setq dashboard-startup-banner 3)
+  (setq dashboard-startup-banner 'logo)
   (setq dashboard-set-heading-icons t)
   (setq dashbard-set-file-icons t)
   (setq dashboard-items '((recents . 5)
@@ -80,6 +81,32 @@
 						     :face 'font-lock-keyword-face))
   (dashboard-modify-heading-icons '((recents . "file-text")))
   (dashboard-setup-startup-hook))
+
+
+;; mail
+;; Special thanks to Gregory J Stein for his cogent walkthrough @cachestocaches.com
+
+(use-package helm-mu)
+
+(setq smtpmail-default-smtp-server "smtp.office365.com")
+(load-library "smtpmail")
+(setq message-send-mail-function 'smtpmail-send-it)
+
+(use-package mu4e-alert
+  :after mu4e
+  :init
+  (setq mu4e-alert-interesting-mail-query
+	(concat
+	 "flag:unread mailDir:/Outlook/INBOX"
+	 ))
+  (mu4e-alert-enable-mode-line-display)
+  (defun gjstein-refresh-mu4e-alert-mode-line ()
+    (interactive)
+    (mu4e~proc-kill)
+    (mu4e-alert-enable-mode-line-display)
+    )
+  (run-with-timer 0 60 'gjstein-refresh-mu4e-alert-mode-line)
+  )
 
 
 
@@ -118,6 +145,8 @@
     (typescript-mode . "typescript")
     ))
 
+;; python environment management
+(use-package pyvenv)
 
 ;; language modes
 (use-package markdown-mode)
@@ -150,7 +179,6 @@
   :config
   (helm-mode 1))
 
-(use-package helm-rg)
 
 (use-package projectile
   :init
@@ -209,6 +237,9 @@
 (global-set-key (kbd "\C-c o") 'nil)
 (global-set-key (kbd "\C-c op") 'org-pomodoro)
 
+;; mail
+(global-set-key (kbd "\C-c m") 'mu4e)
+
 ;; toggle keybindings
 (global-set-key (kbd "\C-c t") 'nil)
 (global-set-key  (kbd "\C-c tn") 'display-line-numbers-mode)
@@ -222,6 +253,7 @@
   "\C-c t" "toggle"
   "\C-c tn" "toggle line num"
   "\C-c o" "org"
+  "\C-c m" "mail"
   )
 
 
@@ -237,7 +269,8 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (all-the-icons-dired dashboard ranger zenburn-theme which-key web-mode vscode-icon use-package treemacs-projectile treemacs-magit treemacs-icons-dired treemacs-evil tide slime shackle scad-mode rust-mode rjsx-mode rg restart-emacs pyvenv pomidor pdf-tools org-pomodoro neotree lsp-ui helm-swoop helm-rg helm-projectile general fzf evil-magit evil-escape dumb-jump csound-mode company-quickhelp company-lsp ccls bug-hunter buffer-move borg auto-package-update all-the-icons))))
+    (mu4e-alert all-the-icons-dired dashboard ranger which-key web-mode use-package treemacs-projectile treemacs-magit treemacs-icons-dired treemacs-evil tide slime scad-mode rust-mode rjsx-mode rg restart-emacs pdf-tools org-pomodoro neotree lsp-ui helm-swoop helm-rg helm-projectile fzf evil-magit evil-escape dumb-jump csound-mode company-quickhelp company-lsp ccls bug-hunter buffer-move borg auto-package-update all-the-icons)))
+ '(send-mail-function (quote mailclient-send-it)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
