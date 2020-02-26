@@ -1,13 +1,15 @@
+;; Paths
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 (setq exec-path (append exec-path '(
 				    "/bin",
 				    "~/.pyenv/shims",
 				    "~/.nvm/versions/node/v10.16.3/bin"
 				    )))
 
-(require 'mu4e)
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
-(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+;; Packages
 (require 'package)
+(require 'mu4e)
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
 			 ("melpa" . "https://melpa.org/packages/")))
 (package-initialize)
@@ -112,10 +114,12 @@
 
 
 ;; lsp configuration
+
 (use-package lsp-mode
   :hook ((
 	  web-mode
 	  python-mode
+	  c-mode
 	  ) . lsp )
   :config
   (lsp-register-client
@@ -138,14 +142,23 @@
 (use-package company-lsp :commands company-lsp)
 
 
+
+(setq ccls-executable "./git_bins/ccls/Release/ccls")
+
 (defvar lsp-language-id-configuration
   '(
     (web-mode . "web")
     (python-mode . "python")
     (typescript-mode . "typescript")
+    (c-mode . "clang")
     ))
 
+;; c server hooking into lsp
+(use-package ccls
+  :hook ((c-mode c++-mode objc-mode cuda-mod) .
+	 (lambda () (require 'ccls) (lsp))))
 ;; python environment management
+
 (use-package pyvenv)
 
 ;; language modes
@@ -173,7 +186,14 @@
 
 (use-package org-pomodoro
   :config
-  (setq org-pomodoro-finished-sound "~/.emacs.d/audio/pomodoro_alarm.wav"))
+  (setq org-pomodoro-finished-sound
+	"./audio/pomodoro_alarm.wav")
+  (setq org-pomodoro-short-break-sound
+	"./audio/back_to_work.wav")
+  (setq org-pomodoro-long-break-sound
+	"./audio/back_from_break.wav")
+  )
+
 
 (use-package helm
   :config
@@ -223,9 +243,8 @@
 ;; Keybindings
 
 ;; projectile
-(global-set-key (kbd "\C-c p") 'nil)
-(global-set-key (kbd "\C-c p p") 'helm-projectile-switch-project)
-(global-set-key (kbd "\C-c p f") 'helm-projectile-find-file)
+(projectile-mode +1)
+(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 
 ;; evil
 (global-set-key (kbd "\C-x z") '("evil-mode" . evil-mode))
